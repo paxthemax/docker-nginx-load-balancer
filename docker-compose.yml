@@ -1,0 +1,20 @@
+version: "3.3"
+
+# Services describes services that will start:
+services:
+  # api is the container name for our API:
+  api:
+    # Build the dockerfile from the project root:
+    build: "."
+    # Expose the port 5000 from the container and bind it to 80:
+    ports:
+      - "80:5000"
+    # Always restart the container:
+    restart: "always"
+    # Connect the api to the common api.network bridge:
+    networks:
+      - "api.network"
+
+# Declare a network to connect all apps:
+networks:
+  api.network:
