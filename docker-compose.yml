@@ -6,12 +6,31 @@ services:
   api:
     # Build the dockerfile from the project root:
     build: "."
-    # Expose the port 5000 from the container and bind it to 80:
+    # Expose the port 5000 and let compose manage it:
     ports:
-      - "80:5000"
+      - "5000"
     # Always restart the container:
     restart: "always"
     # Connect the api to the common api.network bridge:
+    networks:
+      - "api.network"
+    # Start replicas of the api image:
+    deploy:
+      replicas: 5
+  # nginx containter:
+  nginx:
+    # Pull the latest nginx image:
+    image: nginx:latest
+    # Connect the conf file in the image to the one in the repo:
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    # Start only after the API containers are ready:
+    depends_on:
+      - api
+    # Connect the port 80 to nginx:
+    ports:
+      - "80:80"
+    # Connect the load balancer to the common network:
     networks:
       - "api.network"
 
